@@ -1,0 +1,33 @@
+name: P4 Ejercicio 3 - medidas MPI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/ejercicio-3]
+    paths:
+      - p4_ej3.c
+      - .github/workflows/p4_ej3.yml
+
+jobs:
+  medir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar Open MPI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openmpi-bin libopenmpi-dev
+      - name: Compilar
+        run: mpicc -O2 -Wall -Wextra -o p4_ej3 p4_ej3.c
+      - name: Ejecutar 5 veces con 2, 4, 8, 12 y 24 procesos
+        run: |
+          { echo "Entorno: $(nproc) CPU, $(mpirun --version | head -1)"
+            for np in 2 4 8 12 24; do
+              for i in 1 2 3 4 5; do
+                mpirun --oversubscribe -np $np ./p4_ej3
+              done
+            done; } | tee resultados_ej3.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: resultados_ej3
+          path: resultados_ej3.txt
