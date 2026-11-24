@@ -1,3 +1,10 @@
 .DS_Store
 p4_ej1
 ~$*.docx
+
+# Ejecutables del ejercicio 5
+/calor_sec
+/p4_ej5
+
+# Archivos temporales
+.DS_Store
